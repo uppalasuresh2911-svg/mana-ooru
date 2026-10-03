@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <tittle>MANA OORU</tittle>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>🏡MANA OORU</h1>
+    <div class="welcome-card">
+    <h2>👋 Welcome to Mana Ooru</h2>
+    <p>Mana Ooru - Mana Information</p>
+    <p>Jobs, Farmers, Emergency & Local Updates — all in one place.</p>
+</div>
+    <p>🏠 Mana Ooru - Mana Village Information</p>
+    <hr>
+   <input type="text" id="searchBox" placeholder="🔎 Search here..." onkeypress="if(event.key === 'Enter') searchVillage()">
+   <button onclick="clearSearch()">
+    ❌ Clear
+</button>
+<button onclick="searchVillage()">
+    🔍 Search
+</button>
+    <button class="home-button jobs-button" onclick="window.location.href='jobs.html'">
+    💼 Jobs
+</button>
+
+<button class="home-button farmers-button" onclick="window.location.href='farmers.html'">
+    🌾 Farmers
+</button>
+
+<button class="home-button emergency-button" onclick="window.location.href='emergency.html'">
+    🏥 Emergency Help
+</button>
+
+<button class="home-button updates-button" onclick="window.location.href='updates.html'">
+    📢 Local Updates
+</button>
+
+<script>
+function searchVillage() {
+
+    let search = document.getElementById("searchBox").value.toLowerCase().trim();
+
+    if (search === "") {
+        alert("Please enter something to search");
+    }
+    else if (search.includes("job") || search.includes("jobs") || search.includes("work")) {
+        window.location.href = "jobs.html";
+    }
+    else if (search.includes("farmer") || search.includes("farming") || search.includes("crop")) {
+        window.location.href = "farmers.html";
+    }
+    else if (search.includes("emergency") || search.includes("hospital") || search.includes("ambulance")) {
+        window.location.href = "emergency.html";
+    }
+    else if (search.includes("update") || search.includes("updates") || search.includes("news")) {
+        window.location.href = "updates.html";
+    }
+    else {
+        alert("No information found");
+    }
+}
+</script>
+
+<script>
+function clearSearch() {
+    document.getElementById("searchBox").value = "";
+}
+</script>
+
+
+<footer class="footer">
+    <p>© 2026 Mana Ooru</p>
+    <p>🏠 Mana Village • Mana Information</p>
+</footer>
+
+</body>
+
+</html>

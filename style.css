@@ -1,0 +1,160 @@
+body {
+    font-family: Arial, sams-serif;
+    text-align: center;
+    background-color: #f2f7f2;
+    margin: 0;
+    padding: 30px;
+}
+
+h1 {
+    color: green;
+    font-size: 40px;
+}
+
+p {
+    font-size: 20px;
+}
+
+h2 {
+    margin-top: 30px;
+}
+
+button {
+    display: block;
+    width: 250px;
+    margin: 15px auto;
+    padding: 15px;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+button:hover {
+    transform: scale(1.05);
+}
+h2 {
+    margin-top: 30px;
+}
+
+button {
+    transition: 0.2s;
+}
+.job-card {
+    background-color: white;
+    width: 300px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+.job-card button {
+    width: 180px;
+    margin: 10px auto;
+}
+@media (max-width: 600px) {
+
+    body {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 30px;
+    }
+
+    .job-card {
+        width: 90%;
+        box-sizing: border-box;
+    }
+
+    button {
+        width: 90%;
+        max-width: 300px;
+    }
+}
+.home-button {
+    display: block;
+    width: 280px;
+    margin: 15px auto;
+    padding: 18px;
+    font-size: 20px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    background-color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+.home-button {
+    background-color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transition: 0.2s;
+}
+
+.home-button:hover {
+    transform: scale(1.05);
+}
+.jobs-button {
+    background-color: #e8f5e9;
+}
+
+.farmers-button {
+    background-color: #fff8e1;
+}
+
+.emergency-button {
+    background-color: #ffebee;
+}
+
+.updates-button {
+    background-color: #e3f2fd;
+}
+#searchBox {
+    display: block;
+    width: 280px;
+    margin: 15px auto;
+    padding: 15px;
+    font-size: 18px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+.welcome-card {
+    background-color: white;
+    width: 90%;
+    max-width: 600px;
+    margin: 25px auto;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    box-sizing: border-box;
+}
+
+.welcome-card h2 {
+    margin-top: 0;
+    color: green;
+}
+
+.welcome-card p {
+    font-size: 18px;
+}
+.footer {
+    margin-top: 40px;
+    padding: 20px;
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+}
+#donorResult {
+    background-color: white;
+    width: 90%;
+    max-width: 400px;
+    margin: 25px auto;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    box-sizing: border-box;
+}
+
+#donorResult h3 {
+    color: red;
+    margin-top: 0;
+}

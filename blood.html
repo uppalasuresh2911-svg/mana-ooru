@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Mana Ooru - Blood Donors</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth-compat.js"></script>
+</head>
+
+<body>
+
+    <div id="loginBox">
+    <h2>🔐 Login</h2>
+    <input type="email" id="loginEmail" placeholder="Email">
+    <input type="password" id="loginPassword" placeholder="Password">
+    <button onclick="loginUser()">Login</button>
+    <button onclick="logoutUser()">Logout</button>
+    <p id="loginMessage"></p>
+</div>
+
+    <h1>🩸 Blood Donors</h1>
+
+    <p>Mana Ooru - Blood Donor Information</p>
+
+    <hr>
+
+    <h2>🩸 Find a Blood Donor</h2>
+
+    <select id="bloodGroup">
+        <option value="">🩸 Select Blood Group</option>
+        <option value="A+">A+</option>
+        <option value="A-">A-</option>
+        <option value="B+">B+</option>
+        <option value="B-">B-</option>
+        <option value="AB+">AB+</option>
+        <option value="AB-">AB-</option>
+        <option value="O+">O+</option>
+        <option value="O-">O-</option>
+    </select>
+
+    <button id="searchDonorBtn" onclick="searchDonor()">
+    🔍 Search Donor
+</button>
+
+<button onclick="clearDonorResults()">
+    ❌ Clear Results
+</button>
+
+    <hr>
+
+    <h2>📝 Register as Blood Donor</h2>
+
+    <input type="text" id="donorName" placeholder="👤 Your Name">
+
+    <br><br>
+
+    <input type="text" id="donorVillage" placeholder="🏠 Village">
+
+    <br><br>
+
+    <input type="tel" id="donorPhone" placeholder="📞 Phone Number">
+
+    <br><br>
+
+    <h3 id="donorCount">🩸 Registered Donors: 0</h3>
+
+    <button id="registerDonorBtn" onclick="registerDonor()">
+    🩸 Register as Donor
+</button>
+
+    <div id="donorResult"></div>
+
+    <br><br>
+
+    <button onclick="history.back()">
+        ⬅️ Back
+    </button>
+
+    <button onclick="window.location.href='index.html'">
+        🏠 Home
+    </button>
+
+
+<script>
+
+    // 🔥 Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyAHcDJvfVnqo36ICUCjSG8dz6GODXBJAq0",
+        authDomain: "manaooru-18af9.firebaseapp.com",
+        projectId: "manaooru-18af9",
+        storageBucket: "manaooru-18af9.firebasestorage.app",
+        messagingSenderId: "147443654207",
+        appId: "1:147443654207:web:032c405abb71f73e54228a"
+    };
+
+    // Firebase start
+    firebase.initializeApp(firebaseConfig);
+
+    // Firestore database
+    const db = firebase.firestore();
+
+    function loginUser() {
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+    const message = document.getElementById("loginMessage");
+
+    firebase.auth().signInWithEmailAndPassword(email, password)
+        .then(() => {
+            message.innerText = "Login successful ✅";
+        })
+        .catch((error) => {
+            message.innerText = "Login failed ❌ " + error.message;
+        });
+}
+function logoutUser() {
+    firebase.auth().signOut()
+        .then(() => {
+            document.getElementById("loginMessage").innerText = "Logged out successfully ✅";
+        })
+        .catch((error) => {
+            document.getElementById("loginMessage").innerText = "Logout failed ❌ " + error.message;
+        });
+}
+firebase.auth().onAuthStateChanged(function(user) {
+
+    const registerBtn = document.getElementById("registerDonorBtn");
+    const searchBtn = document.getElementById("searchDonorBtn");
+
+    if (user) {
+        registerBtn.disabled = false;
+        searchBtn.disabled = false;
+
+        document.getElementById("donorCount").innerText =
+            "🩸 Loading donor count...";
+
+        updateDonorCount();
+
+    } else {
+        registerBtn.disabled = true;
+        searchBtn.disabled = true;
+
+        document.getElementById("donorCount").innerText =
+            "🩸 Please login";
+            document.getElementById("donorResult").innerHTML = "";
+    }
+
+});
+
+
+    // 🩸 Register Donor
+    async function registerDonor() {
+        if (!firebase.auth().currentUser) {
+    alert("Please login first 🔐");
+    return;
+}
+
+        let name = document.getElementById("donorName").value.trim();
+        let village = document.getElementById("donorVillage").value.trim();
+        let phone = document.getElementById("donorPhone").value.trim();
+        let group = document.getElementById("bloodGroup").value;
+
+        if (name === "" || village === "" || phone === "" || group === "") {
+            alert("Please fill all donor details");
+            return;
+        }
+
+        try {
+
+            await db.collection("donors").add({
+                name: name,
+                village: village,
+                phone: phone,
+                group: group,
+                userId: firebase.auth().currentUser.uid
+            });
+
+            alert(
+                "Thank you " +
+                name +
+                "! Donor registered successfully."
+            );
+
+            document.getElementById("donorName").value = "";
+            document.getElementById("donorVillage").value = "";
+            document.getElementById("donorPhone").value = "";
+
+            updateDonorCount();
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                "Donor registration failed: " +
+                error.message
+            );
+        }
+    }
+
+
+    // 🔍 Search Donor
+    async function searchDonor() {
+        if (!firebase.auth().currentUser) {
+    alert("Please login first 🔐");
+    return;
+}
+
+        let group = document.getElementById("bloodGroup").value;
+
+        if (group === "") {
+            alert("Please select blood group");
+            return;
+        }
+
+        try {
+
+            let snapshot = await db
+                .collection("donors")
+                .get();
+
+            let matchingDonors = [];
+
+            snapshot.forEach(function(item) {
+
+                let donor = item.data();
+
+                if (donor.group === group) {
+
+                    matchingDonors.push({
+                        id: item.id,
+                        ...donor
+                    });
+
+                }
+
+            });
+
+
+            if (matchingDonors.length === 0) {
+
+                alert(
+                    "No " +
+                    group +
+                    " blood donors found"
+                );
+
+                return;
+            }
+
+
+            let result =
+                "<h3>🩸 " +
+                group +
+                " Donors</h3>";
+
+
+            matchingDonors.forEach(function(donor) {
+                let deleteButton = "";
+
+if (donor.userId === firebase.auth().currentUser.uid) {
+    deleteButton =
+        "<button onclick=\"deleteDonor('" +
+        donor.id +
+        "')\">🗑️ Delete</button>";
+}
+
+                result +=
+                    "<p>👤 Name: " +
+                    donor.name +
+                    "</p>" +
+
+                    "<p>🏠 Village: " +
+                    donor.village +
+                    "</p>" +
+
+                    "<p>📞 Phone: " +
+                    donor.phone +
+                    "</p>" +
+
+                    deleteButton +
+                    "<hr>";
+
+            });
+
+
+            document.getElementById(
+                "donorResult"
+            ).innerHTML = result;
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                "Donor search failed: " +
+                error.message
+            );
+        }
+    }
+
+
+    // 🗑️ Delete Donor
+    async function deleteDonor(id) {
+        if (!firebase.auth().currentUser) {
+    alert("Please login first 🔐");
+    return;
+}
+
+        try {
+
+            await db
+                .collection("donors")
+                .doc(id)
+                .delete();
+
+            alert("Donor deleted successfully");
+
+            updateDonorCount();
+
+            searchDonor();
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                "Donor delete failed: " +
+                error.message
+            );
+        }
+    }
+
+
+    // 🔢 Donor Count
+    async function updateDonorCount() {
+        if (!firebase.auth().currentUser) {
+    document.getElementById("donorCount").innerText = "🩸 Please login";
+    return;
+}
+
+        try {
+
+            let snapshot = await db
+                .collection("donors")
+                .get();
+
+            document.getElementById(
+                "donorCount"
+            ).innerText =
+                "🩸 Registered Donors: " +
+                snapshot.size;
+
+        } catch (error) {
+
+            console.error(error);
+
+            document.getElementById(
+                "donorCount"
+            ).innerText =
+                "🩸 Registered Donors: 0";
+        }
+    }
+
+
+    // ❌ Clear Results
+    function clearDonorResults() {
+
+        document.getElementById(
+            "donorResult"
+        ).innerHTML = "";
+
+        document.getElementById(
+            "bloodGroup"
+        ).value = "";
+    }
+
+
+    // Start count
+    updateDonorCount();
+
+</script>
+
+</body>
+
+</html>
